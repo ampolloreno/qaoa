@@ -1,0 +1,131 @@
+// These are the protocol definitions for the coldquanta api as of April 2nd 2020
+// protocols for client<->server interaction
+
+syntax = "proto3";
+
+//Physical layout and mapping from logical qubit to site
+message QubitData {
+    int32 qubit_id = 1;
+    int32 site_id = 2;
+    int32 x = 3;
+    int32 y = 4;
+}
+
+// Which qubits are connected
+message CZConnection {
+    int32 qubit_a = 1;
+    int32 qubit_b = 2;
+}
+
+
+message GateConfiguration {
+    // Per qubit information
+    repeated QubitData qubits = 1;
+    // Connectivity between qubits
+    repeated CZConnection cz_connections = 2;
+}
+
+// State of the qpu
+message QPUState {
+    GateConfiguration gate_configuration = 1;
+    int32 max_shots = 2;
+}
+
+message QPUId {
+    string qpu_id = 1;
+}
+
+
+enum QPUStatus {
+    ONLINE = 0;
+    OFFLINE = 1;
+}
+
+message QPU {
+    string id = 1;
+    string name = 2;
+    QPUStatus status = 3;
+    QPUState qpu_state = 4;
+}
+
+message QPUArray {
+    repeated QPU qpus = 1;
+}
+
+
+message GateID {
+    int32 qubit = 1;
+}
+
+message GateCZ {
+    int32 qubit_a = 1;
+    int32 qubit_b = 2;
+}
+
+message GateR {
+    int32 qubit = 1;
+    float theta = 2; // rotation about that axis
+    float phi = 3; // rotation of axis in the x/y plane
+}
+
+message GateRZ {
+    int32 qubit = 1;
+    float phi = 2; // rotation about the z axis
+}
+
+
+message GateGR {
+    float theta = 2; // rotation about axis
+    float phi = 3; // rotation of axis about the x/y plane
+}
+
+message Gate {
+ oneof gate {
+    GateID id = 1;
+    GateCZ cz = 2;
+    GateR r = 3;
+    GateRZ rz = 4;
+    GateGR gr = 5;
+ }
+}
+
+message Circuit {
+    repeated Gate gates = 1;
+}
+
+message QPUJobInput {
+    QPUId qpu_id = 1;
+    Circuit circuit = 2;
+    int32 shots = 3;
+}
+
+message stateVector {
+    bytes byte_array = 1;
+    int32 bits = 2;
+}
+
+message StateCount {
+    stateVector state_vector = 1;
+    int32 count = 2;
+}
+
+message QPUJobOutput {
+    repeated StateCount state_counts = 1;
+}
+
+message QPUJobId {
+    string job_id = 1;
+}
+
+message QPUJob {
+    enum Status {
+        PENDING = 0;
+        RUNNING = 1;
+        COMPLETE = 2;
+        FAILED = 3;
+        CANCELLED = 4;
+    }
+    Status status = 1;
+    QPUJobInput input = 2;
+    QPUJobOutput output = 3;
+}

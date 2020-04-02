@@ -1,4 +1,4 @@
-from datastructures.coldquanta_circuit_schema import circuit_schema
+from datastructures.machine.coldquanta_circuit_schema import circuit_schema
 
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
