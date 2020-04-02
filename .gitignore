@@ -1,0 +1,8 @@
+.idea
+.coverage
+coverage/
+__pycache__/
+venv/
+build/
+*_pb2.py
+.ipynb_checkpoints
