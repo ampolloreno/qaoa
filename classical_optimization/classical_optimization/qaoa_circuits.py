@@ -31,6 +31,6 @@ def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights: dict, rows: int, 
             QAOA.h(l)
             QAOA.barrier()
         # then apply the single qubit X - rotations with angle beta to all qubits
-        QAOA.rx(betas, list(range(rows * cols)))
+        QAOA.rx(betas[i], list(range(rows * cols)))
         QAOA.measure_all()
     return QAOA
