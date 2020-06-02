@@ -83,19 +83,32 @@ def estimate_cost(counts: dict, weights: dict, func=None):
         return func(cut_values, counts)
 
 
-def plot_landscape(landscape):
-    plt.imshow(landscape)
-    plt.tick_params(
-        axis='both',  # changes apply to the x-axis
-        which='both',  # both major and minor ticks are affected
-        bottom=False,  # ticks along the bottom edge are off
-        top=False,
-        left=False,
-        labelleft=False,  # ticks along the top edge are off
-        labelbottom=False)  # labels along the bottom edge are off
+def plot_landscape(landscape, max_gamma, max_beta, colorbar=True):
+    ax = plt.imshow(landscape)
+    ax.figure.canvas.draw()
+    subplot = ax.figure.get_axes()[0]
+
+    ticks = subplot.get_xticklabels()
+    scale = 1/max([float(tick.get_text().replace('−', '-')) for tick in ticks if tick.get_text() != ''])
+    scale *= max_beta
+    for tick in ticks:
+        if tick.get_text() != '':
+            tick.set_text(round(scale * float(tick.get_text().replace('−', '-')), 2))
+        subplot.set_xticklabels(ticks)
+
+    ticks = subplot.get_yticklabels()
+    scale = 1 / max([float(tick.get_text().replace('−', '-')) for tick in ticks if tick.get_text() != ''])
+    scale *= max_gamma
+    for tick in ticks:
+        if tick.get_text() != '':
+            tick.set_text(round(scale * float(tick.get_text().replace('−', '-')), 2))
+        subplot.set_yticklabels(ticks)
+
     plt.ylabel(r"$\gamma$")
     plt.xlabel(r"$\beta$")
-    plt.colorbar()
+    if colorbar:
+        plt.colorbar()
+    plt.show()
 
 
 def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, coupling_map, weights, rows, cols,
