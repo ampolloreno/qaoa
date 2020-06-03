@@ -17,3 +17,11 @@ Following this, there are (at least) five lines of work to pursue.
 [] QAOA statistics. Notice that we aren't actually interested in the expectation of the cost function. We are interested in the sampling distribution of the MAX cut value. There might be something interesting to say about the statistics we optimize with respect to, and their sampling distribution.
 
 [] Build sensible serialization framework for storing results of running QAOA circuits.
+
+[] What does introducing correlations between gamma and beta do?
+
+[] What depth do we need to take? (i.e. unweighted maxcut cannot be solved with p=1)
+
+[] RQAOA
+
+

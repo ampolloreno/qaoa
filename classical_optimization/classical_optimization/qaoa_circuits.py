@@ -19,7 +19,7 @@ SCIPY_METHODS =\
      #'trust-ncg',
      #'trust-krylov',
      #'trust-exact'
-]
+     ]
 
 
 def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights: dict, rows: int, cols: int, p: int = 1):
@@ -83,8 +83,10 @@ def estimate_cost(counts: dict, weights: dict, func=None):
         return func(cut_values, counts)
 
 
-def plot_landscape(landscape, max_gamma, max_beta, colorbar=True):
+def plot_landscape(landscape, max_gamma, max_beta, colorbar=True, history=None, discretization=None):
+    """Given a QAOA landscape, a 2d numpy array of values coming from sweeping gamma and beta, plot it."""
     ax = plt.imshow(landscape)
+
     ax.figure.canvas.draw()
     subplot = ax.figure.get_axes()[0]
 
@@ -108,11 +110,17 @@ def plot_landscape(landscape, max_gamma, max_beta, colorbar=True):
     plt.xlabel(r"$\beta$")
     if colorbar:
         plt.colorbar()
-    plt.show()
+    # if this is put before, it messes up the scale of the colorbar... I'm not sure why.
+    if history is not None:
+        for i, point in enumerate(history[1:-1]):
+            plt.scatter(*gamma_beta_to_index(*point, discretization, max_gamma, max_beta), c='r')
+        plt.scatter(*gamma_beta_to_index(*history[0], discretization, max_gamma, max_beta), marker='.', s=200, c='w')
+        plt.scatter(*gamma_beta_to_index(*history[-1], discretization, max_gamma, max_beta), marker='*', s=200, c='w')
 
 
 def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, coupling_map, weights, rows, cols,
                                            *, noise_model=None):
+    """Build and run the a qaoa circuit with the given parameters on the given simulator."""
     circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, rows=rows, cols=cols, weights=weights)
     job = execute(circuit,
                   simulator,
@@ -125,11 +133,15 @@ def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, co
 
 
 def gamma_beta_to_index(gamma, beta, discretization, max_gamma, max_beta):
-    return (gamma * discretization/max_gamma)%(discretization-1), (beta * discretization/max_beta)%(discretization-1)
+    """Given a discretization for a maximum beta and gamma, return the sample index that a given gamma, and beta are
+     associated with."""
+    # THIS WAS FLIPPED, AND ONLY NOTICED FOR MORE THAN TWO QUBITS. MAKE SURE THIS MAKES SENSE.
+    return (beta % max_beta * (discretization-1)/max_beta), (gamma % max_gamma * (discretization-1)/max_gamma)
 
 
 def plot_history_over_landscape(history, landscape, discretization, max_gamma, max_beta):
-    plot_landscape(landscape)
+    """Given a history and a landscape, plot the trajectory of the optimizer."""
+    plot_landscape(landscape, max_gamma, max_beta)
     for i, point in enumerate(history[1:-1]):
         plt.scatter(*gamma_beta_to_index(*point, discretization, max_gamma, max_beta), c='r')
     plt.scatter(*gamma_beta_to_index(*history[0], discretization, max_gamma, max_beta), marker='.', s=200, c='w')
@@ -138,6 +150,7 @@ def plot_history_over_landscape(history, landscape, discretization, max_gamma, m
 
 def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, max_gamma, max_beta, rows, cols,
                   history=None):
+    """Try optimizer to optimize QAOA from a random initial point."""
     if history is None:
         history = []
 
@@ -149,7 +162,8 @@ def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, 
 
     @store_log
     def gamma_beta_objective(gamma_beta):
-        return -execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[0], beta=gamma_beta[1], num_shots=shots_per_point,
+        return -execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[0], beta=gamma_beta[1],
+                                                       num_shots=shots_per_point,
                                                        simulator=simulator,
                                                        coupling_map=coupling_map,
                                                        weights=weights,
@@ -157,7 +171,7 @@ def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, 
                                                        cols=cols)
 
     initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma, max_beta)]
-    result = minimize(gamma_beta_objective, x0=initial_gamma_beta, method=optimizer)
+    result = minimize(gamma_beta_objective, x0=np.array(initial_gamma_beta), method=optimizer)
     print(fr'$\gamma$,$\beta$={result.x}')
     print(f'Max cut is {-result.fun}')
     return result
