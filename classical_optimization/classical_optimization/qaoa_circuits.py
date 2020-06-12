@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from qiskit import execute
 import numpy as np
+from recirq.optimize.mgd import model_gradient_descent
 
 SCIPY_METHODS =\
     ['Nelder-Mead',
@@ -149,7 +150,7 @@ def plot_history_over_landscape(history, landscape, discretization, max_gamma, m
 
 
 def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, max_gamma, max_beta, rows, cols,
-                  history=None):
+                  history=None, noise_model=None):
     """Try optimizer to optimize QAOA from a random initial point."""
     if history is None:
         history = []
@@ -168,10 +169,16 @@ def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, 
                                                        coupling_map=coupling_map,
                                                        weights=weights,
                                                        rows=rows,
-                                                       cols=cols)
-
+                                                       cols=cols,
+                                                       noise_model=noise_model)
     initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma, max_beta)]
-    result = minimize(gamma_beta_objective, x0=np.array(initial_gamma_beta), method=optimizer)
+    if optimizer == 'mgd':
+        result = model_gradient_descent(gamma_beta_objective,
+                                        x0=np.array(initial_gamma_beta),
+                                        n_sample_points=1,
+                                        tol=.01)
+    else:
+        result = minimize(gamma_beta_objective, x0=np.array(initial_gamma_beta), method=optimizer)
     print(fr'$\gamma$,$\beta$={result.x}')
     print(f'Max cut is {-result.fun}')
     return result

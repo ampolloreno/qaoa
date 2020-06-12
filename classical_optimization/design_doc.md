@@ -24,4 +24,5 @@ Following this, there are (at least) five lines of work to pursue.
 
 [] RQAOA
 
+[] We need to figure out how to pick intial \gamma, \beta.
 
