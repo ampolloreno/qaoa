@@ -23,7 +23,8 @@ SCIPY_METHODS =\
      ]
 
 
-def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights: dict, rows: int, cols: int, p: int = 1, measure=True):
+def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights=None, rows=None, cols=None, p: int = 1, measure=True,
+                        num_qubits=None):
     """
     :param gammas: A list of gamma values as defined in the original paper by Farhi et al.
     :param betas: A list of beta values as defined in the original paper by Farhi et al.
@@ -34,9 +35,11 @@ def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights: dict, rows: int, 
     :param p: The number of effective trotter steps in this QAOA circuit.
     :return: The qiskit QuantumCircuit for this QAOA instance.
     """
-    QAOA = QuantumCircuit(rows * cols)
+    if rows is not None and cols is not None:
+        num_qubits = rows * cols
+    QAOA = QuantumCircuit(num_qubits)
     # apply the layer of Hadamard gates to all qubits, and then fence all qubits.
-    QAOA.h(range(rows * cols))
+    QAOA.h(range(num_qubits))
     QAOA.barrier()
 
     # apply the Ising type gates with angle gamma along the edges in E
@@ -47,13 +50,14 @@ def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights: dict, rows: int, 
             QAOA.h(l)
             QAOA.cz(k, l)
             QAOA.h(l)
-            QAOA.rz(gammas[i] * weight, l)
+            # Both factors of 2 seems to come from SU(2) being a double cover.
+            QAOA.rz(2*gammas[i] * weight, l)
             QAOA.h(l)
             QAOA.cz(k, l)
             QAOA.h(l)
             QAOA.barrier()
         # then apply the single qubit X - rotations with angle beta to all qubits
-        QAOA.rx(betas[i], list(range(rows * cols)))
+        QAOA.rx(2*betas[i], list(range(num_qubits)))
     if measure:
         QAOA.measure_all()
     else:
@@ -137,10 +141,13 @@ def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, co
     return estimate_cost(all_counts, weights)
 
 
-def beta_gamma_to_index(beta, gamma, discretization, max_gamma, max_beta):
+def beta_gamma_to_index(beta, gamma, discretization, max_gamma, max_beta, relative=False):
     """Given a discretization for a maximum beta and gamma, return the sample index that a given gamma, and beta are
      associated with."""
-    return (beta % max_beta * (discretization-1)/max_beta), (gamma % max_gamma * (discretization-1)/max_gamma)
+    if not relative:
+        return (beta % max_beta * (discretization-1)/max_beta), (gamma % max_gamma * (discretization-1)/max_gamma)
+    else:
+        return (beta % max_beta * (discretization - 1) / max_beta), (gamma % max_gamma * (2*discretization-1)/max_gamma)
 
 
 def plot_history_over_landscape(history, landscape, discretization, max_gamma, max_beta, result):
@@ -190,4 +197,6 @@ def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, 
 
 
 def produce_gammas_betas(discretization, max_gamma, max_beta):
-    return np.linspace(0, max_gamma, discretization), np.linspace(0, max_beta, discretization)
+    """Discretization is the number of points per range of pi (over the beta range).
+     We double this density for gamma."""
+    return np.linspace(0, max_gamma, 2*discretization), np.linspace(0, max_beta, discretization)
