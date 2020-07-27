@@ -2,6 +2,8 @@ import dill
 import hashlib
 from networkx.linalg.graphmatrix import adjacency_matrix
 import numpy as np
+import os
+
 
 def write_graph(graph, attributes=None):
     if attributes is None:
@@ -10,7 +12,12 @@ def write_graph(graph, attributes=None):
     arr = adjacency_matrix(graph).toarray()
     h.update(arr)
     hash_ = h.hexdigest()
-    filename = f'{hash_}.pkl'
+    num_qubits = len(graph.nodes)
+    filename = f'{num_qubits}_graphs/{hash_}.pkl'
+    try:
+        os.mkdir(f'{num_qubits}_graphs')
+    except FileExistsError:
+        pass
     try:
         with open(filename, 'rb') as filehandle:
             data = dill.load(filehandle)
