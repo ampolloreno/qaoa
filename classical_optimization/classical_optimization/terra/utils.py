@@ -40,10 +40,16 @@ def read_graph(filename):
     return data
 
 
-def cost(density_matrix, num_qubits, weights):
+# def cost(density_matrix, num_qubits, weights):
+#     rtn = 0
+#     for edge, weight in weights.items():
+#         rtn += .5 * weight * (1 - np.trace(Z(*edge, num_qubits).dot(density_matrix)))
+#     return rtn
+
+def cost(statevector, num_qubits, weights):
     rtn = 0
     for edge, weight in weights.items():
-        rtn += .5 * weight * (1 - np.trace(Z(*edge, num_qubits).dot(density_matrix)))
+        rtn += .5 * weight * (1 - np.conj(statevector.T).dot(Z(*edge, num_qubits).dot(statevector)))
     return rtn
 
 

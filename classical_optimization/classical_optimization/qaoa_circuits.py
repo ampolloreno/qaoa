@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from qiskit import execute
 import numpy as np
-from recirq.optimize.mgd import model_gradient_descent
+#from recirq.optimize.mgd import model_gradient_descent
 
 SCIPY_METHODS =\
     ['Nelder-Mead',
@@ -24,7 +24,7 @@ SCIPY_METHODS =\
 
 
 def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights=None, rows=None, cols=None, p: int = 1, measure=True,
-                        num_qubits=None):
+                        num_qubits=None, density_matrix=False):
     """
     :param gammas: A list of gamma values as defined in the original paper by Farhi et al.
     :param betas: A list of beta values as defined in the original paper by Farhi et al.
@@ -61,7 +61,8 @@ def maxcut_qaoa_circuit(*, gammas: list, betas: list, weights=None, rows=None, c
     if measure:
         QAOA.measure_all()
     else:
-        QAOA.snapshot_density_matrix('output')
+        if density_matrix:
+            QAOA.snapshot_density_matrix('output')
     return QAOA
 
 
