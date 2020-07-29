@@ -78,7 +78,7 @@ seed = 137
 np.random.seed(seed)
 # We might want more graphs, additionally we want to make sure that the graphs are saved in a way that it is easy
 # to recover the data, and make sure that new graphs are non-isomorphic.
-num_graphs_gen = 10
+num_graphs_gen = 1
 graphs = []
 # We might want larger d.
 d = 3
