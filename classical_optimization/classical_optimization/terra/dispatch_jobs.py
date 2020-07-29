@@ -6,8 +6,8 @@ import networkx as nx
 import numpy as np
 from subprocess import call
 import sys
-
-SLURM = """#!/bin/bash
+num_processors = 32
+SLURM = f"""#!/bin/bash
 # This is a sample slurm job script for the JILA cluster
 # Edit below as required, but delete any lines you do not need
 # email unix@jila.colorado.edu with questions, or come see us
@@ -29,7 +29,7 @@ SLURM = """#!/bin/bash
 #SBATCH -q standard
 
 # Number of processor cores required, e.g., 4
-#SBATCH -n 32
+#SBATCH -n {num_processors}
 
 # Number of nodes to run on.  The JILA Cluster is not suitable for
 # spanning nodes (Summit, XSEDE, etc are good places to run these jobs)
@@ -91,7 +91,8 @@ for num_qubits in [12, 14, 16, 18, 20]:
 
     for graph in graphs:
         filename = write_graph(graph)
-        cmd = f"python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py {filename} {discretization}"
+        cmd = f"python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py" \
+              f" {filename} {discretization} {num_processors}"
         print("Dispatching...")
         with open('scratch.txt', 'w') as filehandle:
             filehandle.write(SLURM + "\n" + cmd)
