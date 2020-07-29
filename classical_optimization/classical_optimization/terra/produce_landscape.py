@@ -39,3 +39,5 @@ if landscape_string not in read_graph(filename).keys():
     landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]))
     stop = time.time()
     write_graph(graph, {landscape_string: landscape, landscape_string + '_time': stop-start})
+else:
+    print("Already computed ths one!")
