@@ -1,0 +1,1 @@
+for i in $(seq 30 $END); do scancel $((996909 + $i)); done
