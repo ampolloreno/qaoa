@@ -1,2 +1,2 @@
 matplotlib
--e git://github.com/quantumlib/ReCirq.git
+git+git://github.com/quantumlib/ReCirq.git#egg=ReCirq
