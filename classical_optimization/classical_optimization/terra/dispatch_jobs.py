@@ -87,6 +87,7 @@ p = .2
 discretization = 10
 
 for num_qubits in [4, 8, 12, 16, 20, 24, 28, 32, 36, 40]:
+    graohs = []
     for _ in range(num_graphs_gen):
         graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
 
