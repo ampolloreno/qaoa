@@ -82,12 +82,13 @@ num_graphs_gen = 1
 graphs = []
 # We might want larger d.
 d = 3
+p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
 
 for num_qubits in [4, 8, 12, 16, 20, 24, 28, 32, 36, 40]:
     for _ in range(num_graphs_gen):
-        graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
+        graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
 
     for graph in graphs:
         for edge in graph.edges:
