@@ -1,1 +1,2 @@
-for i in $(seq 30 $END); do scancel $((996909 + $i)); done
+squeue -u anpo0771 | wc -l
+for i in $(squeue -u anpo0771 | awk '{print  $  1 }' | grep -E '[0-9]'); do scancel $i; done
