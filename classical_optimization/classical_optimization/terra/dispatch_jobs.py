@@ -97,8 +97,6 @@ for num_qubits in [4, 8, 12, 16]:
         graphs.append(g)
 
     for graph in graphs:
-        for edge in graph.edges:
-            graph.add_edge(*edge, weight=1.)
         filename = write_graph(graph)
         cmd = f"python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py" \
               f" {filename} {discretization} {num_processors}"
