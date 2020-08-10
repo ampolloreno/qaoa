@@ -12,7 +12,7 @@
 # jila and nistq.  However, long-running jobs are eligible to run
 # on nistq only if the user is a member of a NIST quantum theory group
 # (i.e., Rey, Holland, or Bohn)
-#SBATCH -p jila,nistq
+#SBATCH -p jila
 
 # QOS determines the job priority and permitted maximum duration.
 # Jobs up to 7 days long should use 'standard', otherwise 'long'
@@ -64,4 +64,4 @@
 # The following example runs a MATLAB program stored in example.m
 # Replace this with commands to run your job. 
 
-python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py 16_graphs/36d30cba737df434d357ee0ef564b19f.pkl 10 32
+python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py 3_regular/32_graphs/b4a20d9f755eedafb0dd8d1faf00d949.pkl 10 32
