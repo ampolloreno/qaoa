@@ -92,7 +92,7 @@ for folder in graph_folders:
     for f in files:
         f = os.path.join(dir_, folder, f)
         cmd = f"python ~/repos/qaoa/classical_optimization/classical_optimization/terra/presentation_data_for_one_graph.py" \
-              f" {path}"
+              f" {f}"
         print("Dispatching...")
         with open('scratch.txt', 'w') as filehandle:
             filehandle.write(SLURM + "\n" + cmd)
