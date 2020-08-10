@@ -21,7 +21,7 @@ SLURM = f"""#!/bin/bash
 # jila and nistq.  However, long-running jobs are eligible to run
 # on nistq only if the user is a member of a NIST quantum theory group
 # (i.e., Rey, Holland, or Bohn)
-#SBATCH -p jila,nistq
+#SBATCH -p jila
 
 # QOS determines the job priority and permitted maximum duration.
 # Jobs up to 7 days long should use 'standard', otherwise 'long'
