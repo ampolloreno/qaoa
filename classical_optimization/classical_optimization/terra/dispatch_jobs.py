@@ -81,7 +81,7 @@ np.random.seed(seed)
 num_graphs_gen = 10
 graphs = []
 # We might want larger d.
-d = 5
+d = 3
 p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
@@ -89,12 +89,12 @@ discretization = 10
 for num_qubits in [4, 8, 12, 16, 20, 24, 28, 32]:
     graohs = []
     for _ in range(num_graphs_gen):
-        g = nx.generators.classic.complete_graph(num_qubits)
-        for edge in g.edges:
-            g.add_edge(*edge, weight=np.random.rand(1)[0])
-        #graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
+        # g = nx.generators.classic.complete_graph(num_qubits)
+        # for edge in g.edges:
+        #     g.add_edge(*edge, weight=np.random.rand(1)[0])
+        graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
-        graphs.append(g)
+        #graphs.append(g)
 
     for graph in graphs:
         filename = write_graph(graph)
