@@ -13,8 +13,6 @@ path = sys.argv[1]
 graph_data = read_graph(path)
 graph = graph_data['graph']
 
-shots_per_point = 10
-
 
 def max_landscape(data):
     for k, _ in data.items():
@@ -26,9 +24,9 @@ def max_landscape(data):
             return data.get(k), max_beta, min_beta, max_gamma, min_gamma
 
 
-
 np.random.seed(666)
-reprate = 50
+# picked to make the points about the same between simulated annealing and es
+reprate = 3
 one_hour = 60 * 60
 max_gamma = 2 * np.pi
 max_beta = np.pi
@@ -44,7 +42,7 @@ def weights(graph):
     return rtn
 
 
-def objective(graph):
+def objective(graph, shots_per_point):
     #Hack for backwards compatibility.
     num_rows = len(graph.nodes)
     num_cols = 1
@@ -72,8 +70,10 @@ def objective(graph):
                                                        seed=np.random.randint(0, 2**32 - 1))
     return gamma_beta_objective, history
 
+
 bounds = [(-np.pi, np.pi), (-np.pi/4, np.pi/4)]
-func, history = objective(graph)
+func, history = objective(graph, shots_per_point=100)
+maxfun = 100 * 500 / 100
 initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma, max_beta)]
 result = dual_annealing(
     lambda x: -1 * func(x),
@@ -82,7 +82,7 @@ result = dual_annealing(
     # One annealing attempt.
     maxiter=1,
     initial_temp=10,
-    maxfun=one_hour * reprate,
+    maxfun=int(maxfun),
     restart_temp_ratio=1E-10,
     no_local_search=True)
 result.fun = -result.fun
@@ -103,7 +103,7 @@ oes = OpenES(NPARAMS,                  # number of model parameters
             forget_best=False)
 
 MAX_ITERATION = 500
-fit_func, history = objective(graph)
+fit_func, history = objective(graph, shots_per_point=1)
 
 
 def test_solver(solver):
