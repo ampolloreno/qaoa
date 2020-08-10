@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 
-def write_graph(graph, attributes=None):
+def write_graph(graph, attributes=None, where=None):
     if attributes is None:
         attributes = {}
     h = hashlib.md5()
@@ -34,6 +34,8 @@ def write_graph(graph, attributes=None):
         else:
             data[k] = v
             print(f"File {filename} already has attribute {k}, STILL OVERWRITING!!!")
+    if where is not None:
+        filename = where
     with open(filename, 'wb') as filehandle:
         dill.dump(data, filehandle)
     return filename

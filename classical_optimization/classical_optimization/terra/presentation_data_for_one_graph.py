@@ -29,10 +29,6 @@ def max_landscape(data):
             return data.get(k), max_beta, min_beta, max_gamma, min_gamma
 
 
-graph_data = read_graph(os.path.join(dir_, '4_graphs', '13bd629afa6b97e0d4cabfca5ed72ffb.pkl'))
-graph = graph_data['graph']
-
-
 def isomorphism_classes(graphs):
     classes = []
     for g in graphs:
