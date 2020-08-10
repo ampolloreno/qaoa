@@ -32,7 +32,8 @@ def write_graph(graph, attributes=None):
         if data.get(k) is None:
             data[k] = v
         else:
-            print(f"File {filename} already has attribute {k}, not overwriting.")
+            data[k] = v
+            print(f"File {filename} already has attribute {k}, STILL OVERWRITING!!!")
     with open(filename, 'wb') as filehandle:
         dill.dump(data, filehandle)
     return filename
