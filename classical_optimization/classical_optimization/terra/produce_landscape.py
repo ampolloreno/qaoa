@@ -11,10 +11,10 @@ from recirq.qaoa.simulation import exact_qaoa_values_on_grid
 import sys
 import time
 
-min_gamma = 0
-max_gamma = 2 * np.pi
-min_beta = 0
-max_beta = np.pi
+min_gamma = -np.pi
+max_gamma = np.pi
+min_beta = -np.pi/4
+max_beta = np.pi/4
 discretization = int(sys.argv[2])
 discretization = 40
 gammas, betas = produce_gammas_betas(discretization, max_gamma, max_beta, min_gamma, min_beta)
