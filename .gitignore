@@ -7,4 +7,5 @@ qaoa_venv/
 build/
 *.out
 *_pb2.py
+*scratch.txt
 .ipynb_checkpoints

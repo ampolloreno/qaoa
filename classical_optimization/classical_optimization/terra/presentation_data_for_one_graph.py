@@ -13,9 +13,6 @@ path = sys.argv[1]
 graph_data = read_graph(path)
 graph = graph_data['graph']
 
-dirs = ['../../../3_regular', '../../../complete']
-dir_ = dirs[1]
-graph_folders = [folder for folder in os.listdir(dir_)]
 shots_per_point = 10
 
 
@@ -28,43 +25,6 @@ def max_landscape(data):
             min_gamma = float(k.split('_')[5][1:])
             return data.get(k), max_beta, min_beta, max_gamma, min_gamma
 
-
-def isomorphism_classes(graphs):
-    classes = []
-    for g in graphs:
-        graph = g[0]
-        appended = False
-        for class_ in classes:
-            if is_isomorphic(graph, class_[0][0]):
-                class_.append(g)
-                appended = True
-                break
-        if not appended:
-            classes.append([g])
-    return classes
-
-
-def prune_graphs(classes):
-    for class_ in classes:
-        while len(class_) > 1:
-            duplicate = class_.pop()
-            os.remove(duplicate[1])
-
-
-def clean_up_graphs():
-    for folder in graph_folders:
-        path = os.path.join(dir_, folder)
-        files = [f for f in os.listdir(path)]
-        graphs = []
-        for f in files:
-            if 'pkl' in f:
-                f = os.path.join(dir_, folder, f)
-                data = read_graph(f)
-                graphs.append((data['graph'], f))
-                #DELETES FILES, UNCOMMENT CAREFULLY
-                if len(data) == 1:
-                    os.remove(f)
-        prune_graphs(isomorphism_classes(graphs))
 
 
 np.random.seed(666)
@@ -203,8 +163,10 @@ landscape, max_beta, min_beta, max_gamma, min_gamma = max_landscape(graph_data)
 # gamma, beta; reported average cut after sampling many times
 maxarg_result = (np.argmax(landscape), np.max(landscape))
 
-write_graph(graph, attributes={'annealing_result': annealing_result,
+write_graph(graph,
+            attributes={'annealing_result': annealing_result,
                                'es_result': es_result,
                                'maxcut_result': maxcut_result,
-                               'maxarg_result': maxarg_result})
+                               'maxarg_result': maxarg_result},
+            where=path)
 
