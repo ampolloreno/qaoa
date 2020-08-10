@@ -85,14 +85,38 @@ d = 3
 p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
+complete = True
+
+
+def truncate_and_scale(graph):
+    num_weights = len(graph.edges)
+    length = 0
+    collisions = {}
+    for edge in graph.edges:
+        weight = round(graph.get_edge_data(*edge)['weight'] * 10**length)
+        collisions[weight] = collisions.get(weight, 0) + 1
+    while len(list(collisions.keys())) < num_weights:
+        length += 1
+        collisions = {}
+        for edge in graph.edges:
+            weight = round(graph.get_edge_data(*edge)['weight'] * 10**length)
+            collisions[weight] = collisions.get(weight, 0) + 1
+    for edge in graph.edges:
+        weight = int(round(graph.get_edge_data(*edge)['weight'] * 10**length))
+        graph.add_edge(*edge, weight=weight)
+    return graph
+
 
 for num_qubits in [4, 8, 12, 16, 20, 24]:
     graohs = []
     for _ in range(num_graphs_gen):
-        g = nx.generators.classic.complete_graph(num_qubits)
-        for edge in g.edges:
-            g.add_edge(*edge, weight=np.random.rand(1)[0])
-        #graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
+        if complete:
+            g = nx.generators.classic.complete_graph(num_qubits)
+            for edge in g.edges:
+                g.add_edge(*edge, weight=np.random.rand(1)[0])
+            truncate_and_scale(g)
+        else:
+            graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
         #graphs.append(g)
 
