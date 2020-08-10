@@ -89,10 +89,10 @@ discretization = 10
 for num_qubits in [4, 8, 12, 16, 20, 24]:
     graohs = []
     for _ in range(num_graphs_gen):
-        # g = nx.generators.classic.complete_graph(num_qubits)
-        # for edge in g.edges:
-        #     g.add_edge(*edge, weight=np.random.rand(1)[0])
-        graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
+        g = nx.generators.classic.complete_graph(num_qubits)
+        for edge in g.edges:
+            g.add_edge(*edge, weight=np.random.rand(1)[0])
+        #graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
         #graphs.append(g)
 

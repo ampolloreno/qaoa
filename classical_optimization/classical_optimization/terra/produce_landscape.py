@@ -12,11 +12,11 @@ import sys
 import time
 
 min_gamma = 0
-max_gamma = np.pi/2
-min_beta = -np.pi/4
-max_beta = np.pi/4
+max_gamma = 2 * np.pi
+min_beta = 0
+max_beta = np.pi
 discretization = int(sys.argv[2])
-discretization = 20
+discretization = 40
 gammas, betas = produce_gammas_betas(discretization, max_gamma, max_beta, min_gamma, min_beta)
 
 filename = sys.argv[1]
@@ -39,7 +39,7 @@ if landscape_string not in read_graph(filename).keys():
     #     for j, beta in enumerate(betas):
     #         landscape[i][j] = expectations[i*len(betas) + j]
     landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]),
-                                          x_grid_num=discretization, y_grid_num=discretization)
+                                          x_grid_num=2 * discretization, y_grid_num=discretization)
     stop = time.time()
     write_graph(graph, {landscape_string: landscape, landscape_string + '_time': stop-start})
 else:

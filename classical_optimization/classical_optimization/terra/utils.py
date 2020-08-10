@@ -13,7 +13,7 @@ def write_graph(graph, attributes=None):
     h.update(arr)
     hash_ = h.hexdigest()
     num_qubits = len(graph.nodes)
-    filename = f'3_regular/{num_qubits}_graphs/{hash_}.pkl'
+    filename = f'complete/{num_qubits}_graphs/{hash_}.pkl'
     try:
         os.mkdir(f'3_regular')
     except FileExistsError:
