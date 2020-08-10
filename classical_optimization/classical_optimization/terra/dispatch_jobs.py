@@ -86,7 +86,7 @@ p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
 
-for num_qubits in [4, 8, 12, 16, 20, 24, 28, 32]:
+for num_qubits in [4, 8, 12, 16, 20, 24]:
     graohs = []
     for _ in range(num_graphs_gen):
         # g = nx.generators.classic.complete_graph(num_qubits)
