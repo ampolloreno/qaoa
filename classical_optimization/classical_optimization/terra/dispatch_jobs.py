@@ -78,7 +78,7 @@ seed = 137
 np.random.seed(seed)
 # We might want more graphs, additionally we want to make sure that the graphs are saved in a way that it is easy
 # to recover the data, and make sure that new graphs are non-isomorphic.
-num_graphs_gen = 20
+num_graphs_gen = 10
 graphs = []
 # We might want larger d.
 d = 5
@@ -86,12 +86,12 @@ p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
 
-for num_qubits in [4, 8, 12, 16]:
+for num_qubits in [4, 8, 12, 16, 20, 24, 28, 32]:
     graohs = []
     for _ in range(num_graphs_gen):
         g = nx.generators.classic.complete_graph(num_qubits)
         for edge in g.edges:
-            g.add_edge(*edge, weight=np.random.randint(1, 4))
+            g.add_edge(*edge, weight=np.random.rand(0, 1))
         #graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
         graphs.append(g)

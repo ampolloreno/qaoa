@@ -197,7 +197,7 @@ def try_optimizer(optimizer, simulator, coupling_map, shots_per_point, weights, 
     return result
 
 
-def produce_gammas_betas(discretization, max_gamma, max_beta):
+def produce_gammas_betas(discretization, max_gamma, max_beta, min_gamma=0, min_beta=0):
     """Discretization is the number of points per range of pi (over the beta range).
      We double this density for gamma."""
-    return np.linspace(0, max_gamma, 2*discretization), np.linspace(0, max_beta, discretization)
+    return np.linspace(min_gamma, max_gamma, 2*discretization), np.linspace(min_beta, max_beta, discretization)

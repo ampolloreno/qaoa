@@ -11,14 +11,16 @@ from recirq.qaoa.simulation import exact_qaoa_values_on_grid
 import sys
 import time
 
+min_gamma = 0
 max_gamma = np.pi/2
-max_beta = np.pi/2
+min_beta = -np.pi/4
+max_beta = np.pi/4
 discretization = int(sys.argv[2])
 discretization = 20
-gammas, betas = produce_gammas_betas(discretization, max_gamma, max_beta)
+gammas, betas = produce_gammas_betas(discretization, max_gamma, max_beta, min_gamma, min_beta)
 
 filename = sys.argv[1]
-landscape_string = f"landscape_d{discretization}_b{max_beta}_g{max_gamma}"
+landscape_string = f"landscape_d{discretization}_b{max_beta}_g{max_gamma}_b{min_beta}_g{min_gamma}"
 if landscape_string not in read_graph(filename).keys():
     graph = read_graph(filename)['graph']
     num_qubits = len(graph.nodes)
