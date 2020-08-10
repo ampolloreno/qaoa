@@ -15,11 +15,11 @@ def write_graph(graph, attributes=None):
     num_qubits = len(graph.nodes)
     filename = f'complete/{num_qubits}_graphs/{hash_}.pkl'
     try:
-        os.mkdir(f'3_regular')
+        os.mkdir(f'complete')
     except FileExistsError:
         pass
     try:
-        os.mkdir(f'3_regular/{num_qubits}_graphs')
+        os.mkdir(f'complete/{num_qubits}_graphs')
     except FileExistsError:
         pass
     try:

@@ -108,13 +108,14 @@ def truncate_and_scale(graph):
 
 
 for num_qubits in [4, 8, 12, 16, 20, 24]:
-    graohs = []
+    graphs = []
     for _ in range(num_graphs_gen):
         if complete:
             g = nx.generators.classic.complete_graph(num_qubits)
             for edge in g.edges:
                 g.add_edge(*edge, weight=np.random.rand(1)[0])
             truncate_and_scale(g)
+            graphs.append(g)
         else:
             graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
