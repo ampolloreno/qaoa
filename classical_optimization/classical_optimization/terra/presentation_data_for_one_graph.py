@@ -58,7 +58,7 @@ def objective(graph, shots_per_point):
     @store_log
     def gamma_beta_objective(gamma_beta):
         # The cut value is the expectation value, minima of the negation correspond to maxima.
-        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[1], beta=gamma_beta[0],
+        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[1]*np.pi, beta=gamma_beta[0]*np.pi,
                                                        num_shots=shots_per_point,
                                                        simulator=simulator,
                                                        coupling_map=None,
@@ -87,7 +87,7 @@ result = dual_annealing(
     no_local_search=True)
 result.fun = -result.fun
 # gamma, beta; reported average cut after sampling many times
-annealing_result = (result.x, result.fun)
+annealing_result = (result.x*np.pi, result.fun)
 
 NPARAMS = 2
 NPOPULATION = 100
@@ -125,7 +125,7 @@ def test_solver(solver):
 
 history, result = test_solver(oes)
 # gamma, beta; reported average cut after sampling many times
-es_result = (result[0], result[1])
+es_result = (result[0]*np.pi, result[1])
 
 
 def cutsize(set1, set2, g):
