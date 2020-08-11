@@ -13,7 +13,10 @@ def write_graph(graph, attributes=None, where=None):
     h.update(arr)
     hash_ = h.hexdigest()
     num_qubits = len(graph.nodes)
-    filename = f'complete/{num_qubits}_graphs/{hash_}.pkl'
+    if where is not None:
+        filename = where
+    else:
+        filename = f'complete/{num_qubits}_graphs/{hash_}.pkl'
     try:
         os.mkdir(f'complete')
     except FileExistsError:
@@ -34,8 +37,6 @@ def write_graph(graph, attributes=None, where=None):
         else:
             data[k] = v
             print(f"File {filename} already has attribute {k}, STILL OVERWRITING!!!")
-    if where is not None:
-        filename = where
     with open(filename, 'wb') as filehandle:
         dill.dump(data, filehandle)
     return filename
