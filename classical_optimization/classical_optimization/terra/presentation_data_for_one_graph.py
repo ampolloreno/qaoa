@@ -102,7 +102,7 @@ oes = OpenES(NPARAMS,                  # number of model parameters
             rank_fitness=False,        # use rank rather than fitness numbers
             forget_best=False)
 
-MAX_ITERATION = 500
+MAX_ITERATION = 50
 fit_func, history = objective(graph, shots_per_point=1)
 
 
