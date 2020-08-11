@@ -85,7 +85,7 @@ d = 3
 p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
-complete = True
+complete = False
 
 
 def truncate_and_scale(graph):
@@ -117,7 +117,10 @@ for num_qubits in [4, 8, 12, 16, 20, 24]:
             truncate_and_scale(g)
             graphs.append(g)
         else:
-            graphs.append(nx.generators.random_graphs.random_regular_graph(d, num_qubits))
+            graph = nx.generators.random_graphs.random_regular_graph(d, num_qubits)
+            for edge in g.edges:
+                g.add_edge(*edge, weight=1)
+            graphs.append(graph)
         #graphs.append(nx.generators.random_graphs.watts_strogatz_graph(num_qubits, d, p, seed=seed))
         #graphs.append(g)
 
