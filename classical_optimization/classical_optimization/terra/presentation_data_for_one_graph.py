@@ -158,15 +158,15 @@ def maxcut(g, a=None, b=None, used=None):
     return cutsize(a, b, g), a, b
 
 
-maxcut_result = maxcut(graph)
+#maxcut_result = maxcut(graph)
 landscape, max_beta, min_beta, max_gamma, min_gamma = max_landscape(graph_data)
 # gamma, beta; reported average cut after sampling many times
 maxarg_result = (np.argmax(landscape), np.max(landscape))
 
 write_graph(graph,
             attributes={'annealing_result': annealing_result,
-                               'es_result': es_result,
-                               'maxcut_result': maxcut_result,
-                               'maxarg_result': maxarg_result},
+                        'es_result': es_result,
+                        #'maxcut_result': maxcut_result,
+                        'maxarg_result': maxarg_result},
             where=path)
 
