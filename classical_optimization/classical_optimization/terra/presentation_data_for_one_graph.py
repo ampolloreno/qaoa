@@ -47,14 +47,14 @@ def objective(graph, shots_per_point):
 
     def store_log(func):
         def logged_func(x):
-            history.append(x)
+            history.append((x, func(x)))
             return func(x)
         return logged_func
 
     @store_log
     def gamma_beta_objective(gamma_beta):
         # The cut value is the expectation value, minima of the negation correspond to maxima.
-        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[1]*np.pi, beta=gamma_beta[0]*np.pi, # We will rescale the argument by pi.
+        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[0]*np.pi, beta=gamma_beta[1]*np.pi, # We will rescale the argument by pi.
                                                        num_shots=shots_per_point,
                                                        simulator=simulator,
                                                        coupling_map=None,
@@ -68,10 +68,11 @@ def objective(graph, shots_per_point):
 
 
 bounds = np.array([(-np.pi, np.pi), (-np.pi/4, np.pi/4)])
-bounds /= np.pi # Because we scaled by pi.
+bounds /= np.pi  # Because we scaled by pi.
 (min_gamma, max_gamma), (min_beta, max_beta) = bounds
-func, history = objective(graph, shots_per_point=100)
+func, history = objective(graph, shots_per_point=1000)
 initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma-min_gamma, max_beta - min_beta)]
+initial_gamma_beta = [0., 0.]
 initial_gamma_beta[0] -= min_gamma
 initial_gamma_beta[1] -= min_beta
 
@@ -87,20 +88,20 @@ result = dual_annealing(
     no_local_search=True)
 result.fun = -result.fun
 # gamma, beta; reported average cut after sampling many times
-annealing_result = (result.x * np.pi, result.fun)
+annealing_result = (result.x * np.pi, result.fun, history)
 
 NPARAMS = 2
-NPOPULATION = 100
+NPOPULATION = 50
 oes = OpenES(NPARAMS,                  # number of model parameters
-            sigma_init=0.025,            # initial standard deviation
+            sigma_init=0.025/np.pi,            # initial standard deviation
             sigma_decay=0.999,         # don't anneal standard deviation
-            learning_rate=0.005,         # learning rate for standard deviation
+            learning_rate=0.5,         # learning rate for standard deviation
             learning_rate_decay = 0.999, # annealing the learning rate
             popsize=NPOPULATION,       # population size
             rank_fitness=False,        # use rank rather than fitness numbers
             forget_best=True)
-
-MAX_ITERATION = 500
+oes.mu = np.array([0., 0.])
+MAX_ITERATION = 100
 fit_func, history = objective(graph, shots_per_point=100)
 
 
@@ -109,11 +110,12 @@ def test_solver(solver):
     for j in range(MAX_ITERATION):
         solutions = solver.ask()
         fitness_list = np.zeros(solver.popsize)
+        print(solver.mu * np.pi)
         for i in range(solver.popsize):
             fitness_list[i] = fit_func(solutions[i])
         solver.tell(fitness_list)
         result = solver.result()  # first element is the best solution, second element is the best fitness
-        history.append(result[1])
+        history.append(result)
         if (j + 1) % 100 == 0:
             print("fitness at iteration", (j + 1), result[1])
     print("local optimum discovered by solver:\n", result[0])
@@ -123,7 +125,7 @@ def test_solver(solver):
 
 history, result = test_solver(oes)
 # gamma, beta; reported average cut after sampling many times
-es_result = (result[0] * np.pi, result[1])
+es_result = (result[0] * np.pi, result[1], history)
 
 
 def cutsize(set1, set2, g):

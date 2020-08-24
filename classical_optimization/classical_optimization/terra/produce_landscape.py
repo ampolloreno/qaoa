@@ -38,7 +38,7 @@ if landscape_string not in read_graph(filename).keys():
     # for i, gamma in enumerate(gammas):
     #     for j, beta in enumerate(betas):
     #         landscape[i][j] = expectations[i*len(betas) + j]
-    landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]),
+    landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]), xlim=(min_gamma, max_gamma), ylim = (min_beta, max_beta),
                                           x_grid_num=2 * discretization, y_grid_num=discretization)
     stop = time.time()
     write_graph(graph, {landscape_string: landscape, landscape_string + '_time': stop-start})
