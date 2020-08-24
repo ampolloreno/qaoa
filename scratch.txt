@@ -64,4 +64,4 @@
 # The following example runs a MATLAB program stored in example.m
 # Replace this with commands to run your job. 
 
-python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py complete/20_graphs/b62484bb5a66a7268d094ad97401b748.pkl 10 32
+python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py 3regular/8_graphs/4bba8f1e90ae53960bb881ba676dee56.pkl 10 32
