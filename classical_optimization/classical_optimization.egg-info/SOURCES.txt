@@ -1,4 +1,5 @@
 setup.py
+classical_optimization/optimizer_implementations.py
 classical_optimization/qaoa_circuits.py
 classical_optimization.egg-info/PKG-INFO
 classical_optimization.egg-info/SOURCES.txt

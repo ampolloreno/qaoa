@@ -26,10 +26,6 @@ def max_landscape(data):
 
 np.random.seed(666)
 # picked to make the points about the same between simulated annealing and es
-reprate = 3
-one_hour = 60 * 60
-max_gamma = 2 * np.pi
-max_beta = np.pi
 simulator = Aer.get_backend('qasm_simulator')
 noise_model = create_noise_model(cz_fidelity=1)
 
@@ -58,7 +54,7 @@ def objective(graph, shots_per_point):
     @store_log
     def gamma_beta_objective(gamma_beta):
         # The cut value is the expectation value, minima of the negation correspond to maxima.
-        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[1]/np.pi, beta=gamma_beta[0]/np.pi,
+        return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[1]*np.pi, beta=gamma_beta[0]*np.pi, # We will rescale the argument by pi.
                                                        num_shots=shots_per_point,
                                                        simulator=simulator,
                                                        coupling_map=None,
@@ -71,10 +67,14 @@ def objective(graph, shots_per_point):
     return gamma_beta_objective, history
 
 
-bounds = [(-np.pi, np.pi), (-np.pi/4, np.pi/4)]
+bounds = np.array([(-np.pi, np.pi), (-np.pi/4, np.pi/4)])
+bounds /= np.pi # Because we scaled by pi.
+(min_gamma, max_gamma), (min_beta, max_beta) = bounds
 func, history = objective(graph, shots_per_point=100)
-maxfun = 100 * 500 / 100
-initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma, max_beta)]
+initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma-min_gamma, max_beta - min_beta)]
+initial_gamma_beta[0] -= min_gamma
+initial_gamma_beta[1] -= min_beta
+
 result = dual_annealing(
     lambda x: -1 * func(x),
     bounds=bounds,
@@ -82,12 +82,12 @@ result = dual_annealing(
     # One annealing attempt.
     maxiter=1,
     initial_temp=10,
-    maxfun=int(maxfun),
+    maxfun=int(100 * 500),  # Same as ES, we'll consider 100 NPOP and 500 EPOCHS.
     restart_temp_ratio=1E-10,
     no_local_search=True)
 result.fun = -result.fun
 # gamma, beta; reported average cut after sampling many times
-annealing_result = (result.x/np.pi, result.fun)
+annealing_result = (result.x * np.pi, result.fun)
 
 NPARAMS = 2
 NPOPULATION = 100
@@ -97,13 +97,11 @@ oes = OpenES(NPARAMS,                  # number of model parameters
             learning_rate=0.005,         # learning rate for standard deviation
             learning_rate_decay = 0.999, # annealing the learning rate
             popsize=NPOPULATION,       # population size
-            antithetic=False,          # whether to use antithetic sampling
-            weight_decay=0.00,         # weight decay coefficient
             rank_fitness=False,        # use rank rather than fitness numbers
-            forget_best=False)
+            forget_best=True)
 
-MAX_ITERATION = 50
-fit_func, history = objective(graph, shots_per_point=1)
+MAX_ITERATION = 500
+fit_func, history = objective(graph, shots_per_point=100)
 
 
 def test_solver(solver):
@@ -125,7 +123,7 @@ def test_solver(solver):
 
 history, result = test_solver(oes)
 # gamma, beta; reported average cut after sampling many times
-es_result = (result[0]/np.pi, result[1])
+es_result = (result[0] * np.pi, result[1])
 
 
 def cutsize(set1, set2, g):
