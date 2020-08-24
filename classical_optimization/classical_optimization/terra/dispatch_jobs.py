@@ -107,7 +107,7 @@ def truncate_and_scale(graph):
     return graph
 
 
-for num_qubits in [20]:#[4, 8, 12, 16, 20]:
+for num_qubits in [8]:#[4, 8, 12, 16, 20]:
     graphs = []
     for _ in range(num_graphs_gen):
         if complete:
