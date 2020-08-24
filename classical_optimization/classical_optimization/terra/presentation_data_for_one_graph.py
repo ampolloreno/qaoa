@@ -81,8 +81,9 @@ result = dual_annealing(
     bounds=bounds,
     x0=np.array(initial_gamma_beta),
     # One annealing attempt.
-    maxiter=1,
+    maxiter=10000,
     maxfun=int(100 * 500),  # Same as ES, we'll consider 100 NPOP and 500 EPOCHS.
+    # It looks like it might use 5 evaluations to settle down. So we'll give it 100*500/5 = 10000 retries.
     restart_temp_ratio=1E-10,
     no_local_search=True)
 result.fun = -result.fun
