@@ -85,7 +85,7 @@ d = 3
 p = .2
 # We will scan over this parameter, it's not clear if it should scale multiplicatively, or additively.
 discretization = 10
-complete = False
+complete = True
 
 
 def truncate_and_scale(graph):
@@ -107,7 +107,7 @@ def truncate_and_scale(graph):
     return graph
 
 
-for num_qubits in [4]:#, 8, 12, 16, 20, 24]:
+for num_qubits in [4, 8, 12, 16, 20]:
     graphs = []
     for _ in range(num_graphs_gen):
         if complete:

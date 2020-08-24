@@ -70,11 +70,11 @@ def objective(graph, shots_per_point):
 bounds = np.array([(-np.pi, np.pi), (-np.pi/4, np.pi/4)])
 bounds /= np.pi  # Because we scaled by pi.
 (min_gamma, max_gamma), (min_beta, max_beta) = bounds
-func, history = objective(graph, shots_per_point=1000)
+func, history = objective(graph, shots_per_point=100)
 initial_gamma_beta = [np.random.rand() * max_param for max_param in (max_gamma-min_gamma, max_beta - min_beta)]
-initial_gamma_beta = [0., 0.]
 initial_gamma_beta[0] -= min_gamma
 initial_gamma_beta[1] -= min_beta
+initial_gamma_beta = np.array([0., 0.])
 
 result = dual_annealing(
     lambda x: -1 * func(x),
@@ -82,7 +82,6 @@ result = dual_annealing(
     x0=np.array(initial_gamma_beta),
     # One annealing attempt.
     maxiter=1,
-    initial_temp=10,
     maxfun=int(100 * 500),  # Same as ES, we'll consider 100 NPOP and 500 EPOCHS.
     restart_temp_ratio=1E-10,
     no_local_search=True)
@@ -91,17 +90,17 @@ result.fun = -result.fun
 annealing_result = (result.x * np.pi, result.fun, history)
 
 NPARAMS = 2
-NPOPULATION = 50
+NPOPULATION = 100
 oes = OpenES(NPARAMS,                  # number of model parameters
-            sigma_init=0.025/np.pi,            # initial standard deviation
+            sigma_init=0.025,            # initial standard deviation
             sigma_decay=0.999,         # don't anneal standard deviation
-            learning_rate=0.5,         # learning rate for standard deviation
+            learning_rate=0.05,         # learning rate for standard deviation WE BUMPED THIS UP
             learning_rate_decay = 0.999, # annealing the learning rate
             popsize=NPOPULATION,       # population size
             rank_fitness=False,        # use rank rather than fitness numbers
             forget_best=True)
-oes.mu = np.array([0., 0.])
-MAX_ITERATION = 100
+oes.mu = initial_gamma_beta
+MAX_ITERATION = 500
 fit_func, history = objective(graph, shots_per_point=100)
 
 
@@ -110,7 +109,6 @@ def test_solver(solver):
     for j in range(MAX_ITERATION):
         solutions = solver.ask()
         fitness_list = np.zeros(solver.popsize)
-        print(solver.mu * np.pi)
         for i in range(solver.popsize):
             fitness_list[i] = fit_func(solutions[i])
         solver.tell(fitness_list)
