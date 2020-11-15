@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 
-def write_graph(graph, attributes=None, where=None):
+def write_graph(graph, attributes=None, where=None, noisy=False):
     if attributes is None:
         attributes = {}
     h = hashlib.md5()
@@ -13,16 +13,19 @@ def write_graph(graph, attributes=None, where=None):
     h.update(arr)
     hash_ = h.hexdigest()
     num_qubits = len(graph.nodes)
+    name = 'hari'
+    if noisy:
+        name += 'noisy'
     if where is not None:
         filename = where
     else:
-        filename = f'hari/{num_qubits}_graphs/{hash_}.pkl'
+        filename = f'{name}/{num_qubits}_graphs/{hash_}.pkl'
     try:
-        os.mkdir(f'hari')
+        os.mkdir(f'{name}')
     except FileExistsError:
         pass
     try:
-        os.mkdir(f'hari/{num_qubits}_graphs')
+        os.mkdir(f'{name}/{num_qubits}_graphs')
     except FileExistsError:
         pass
     try:
