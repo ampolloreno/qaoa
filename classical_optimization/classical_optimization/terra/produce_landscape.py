@@ -29,10 +29,10 @@ if landscape_string not in read_graph(filename).keys():
     start = time.time()
     if noisy:
         simulator = Aer.get_backend('qasm_simulator')
-        noise_model = create_noise_model(cz_fidelity=.8)
+        noise_model = create_noise_model(cz_fidelity=.9)
         experiments = []
-        for gamma in gammas:
-            for beta in betas:
+        for beta in betas:
+            for gamma in gammas:
                 circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, num_qubits=num_qubits, weights=weights(graph), measure=False, density_matrix=True)
                 experiments.append(circuit)
         job = execute(experiments, backend=simulator, noise_model=noise_model)
@@ -43,12 +43,12 @@ if landscape_string not in read_graph(filename).keys():
 
         #expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
 
-        landscape = np.zeros((2*discretization, discretization))
-        for i, gamma in enumerate(gammas):
-            for j, beta in enumerate(betas):
-                landscape[i][j] = expectations[i*len(betas) + j]
+        landscape = np.zeros((discretization, 2*discretization))
+        for i, beta in enumerate(betas):
+            for j, gamma in enumerate(gammas):
+                landscape[i][j] = expectations[i*len(gammas) + j]
     else:
-        landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]), xlim=(min_gamma, max_gamma), ylim = (min_beta, max_beta),
+        landscape = exact_qaoa_values_on_grid(graph, num_processors=int(sys.argv[3]), xlim=(min_gamma, max_gamma), ylim=(min_beta, max_beta),
                                               x_grid_num=2 * discretization, y_grid_num=discretization)
     stop = time.time()
     write_graph(graph, {landscape_string: landscape, landscape_string + '_time': stop-start}, noisy=noisy)
