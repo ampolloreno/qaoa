@@ -29,7 +29,7 @@ if landscape_string not in read_graph(filename).keys():
     start = time.time()
     if noisy:
         simulator = Aer.get_backend('qasm_simulator')
-        noise_model = create_noise_model(cz_fidelity=.9)
+        noise_model = create_noise_model(cz_fidelity=1)
         experiments = []
         for beta in betas:
             for gamma in gammas:
