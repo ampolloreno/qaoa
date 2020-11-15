@@ -91,6 +91,8 @@ for num_qubits in [n]:
         edges = [[i, j] for i in range(num_qubits) for j in range(num_qubits) if i != j]
         graph_edges = []
         g = nx.Graph()
+        edges = [[i, j] for i in range(num_qubits) for j in range(num_qubits) if i != j]
+        graph_edges = []
         for i in range(num_qubits):
             g.add_node(i)
         for __ in range(int(m)):
