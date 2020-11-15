@@ -64,6 +64,13 @@ def cost(statevector, num_qubits, weights):
     return rtn
 
 
+def density_cost(density_matrix, num_qubits, weights):
+    rtn = 0
+    for edge, weight in weights.items():
+        rtn += .5 * weight * (1 - np.trace(Z(*edge, num_qubits).dot(density_matrix)))
+    return rtn
+
+
 def Z(i, j, num_qubits):
     rtn = np.eye(1)
     z = np.array([[1, 0], [0, -1]])

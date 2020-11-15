@@ -103,7 +103,7 @@ for num_qubits in [n]:
         graphs.append(g)
 
     for graph in graphs:
-        filename = write_graph(graph)
+        filename = write_graph(graph, noisy=noisy)
         cmd = f"python ~/repos/qaoa/classical_optimization/classical_optimization/terra/produce_landscape.py" \
               f" {filename} {discretization} {num_processors}"
         print("Dispatching...")

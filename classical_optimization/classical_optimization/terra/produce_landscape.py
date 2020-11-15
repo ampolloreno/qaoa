@@ -2,7 +2,7 @@
 python produce_landscape.py filename discretization
 """
 from classical_optimization.qaoa_circuits import produce_gammas_betas, maxcut_qaoa_circuit
-from classical_optimization.terra.utils import write_graph, read_graph, weights, cost
+from classical_optimization.terra.utils import write_graph, read_graph, weights, density_cost
 from coldquanta.qiskit_tools.modeling.neutral_atom_noise_model import create_noise_model
 import numpy as np
 from qiskit import Aer, execute
@@ -33,10 +33,15 @@ if landscape_string not in read_graph(filename).keys():
         experiments = []
         for gamma in gammas:
             for beta in betas:
-                circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, num_qubits=num_qubits, weights=weights(graph), measure=False)
+                circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, num_qubits=num_qubits, weights=weights(graph), measure=False, density_matrix=True)
                 experiments.append(circuit)
         job = execute(experiments, backend=simulator, noise_model=noise_model)
-        expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
+        outputs = [result.data.snapshots.density_matrix['output'][0]['value'] for result in job.result().results]
+        # The diagonal is real, so we take the first element.
+        expectations = [density_cost(np.array(output)[:, :, 0], num_qubits=num_qubits, weights=weights(graph)) for output in
+                        outputs]
+
+        #expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
 
         landscape = np.zeros((2*discretization, discretization))
         for i, gamma in enumerate(gammas):
