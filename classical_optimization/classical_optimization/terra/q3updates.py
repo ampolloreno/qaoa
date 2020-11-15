@@ -84,6 +84,7 @@ discretization = 10
 n = 16
 p = 1/n
 m = 1/2 * p * n**2
+noisy = True
 
 for num_qubits in [n]:
     graphs = []
