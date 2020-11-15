@@ -94,7 +94,7 @@ for num_qubits in [n]:
         g = nx.Graph()
         for i in range(num_qubits):
             g.add_node(i)
-        for __ in range(m):
+        for __ in range(int(m)):
             edge = edges.pop(np.random.randint(0, len(edges)))
             graph_edges.append(edge)
         for edge in graph_edges:
