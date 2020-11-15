@@ -16,13 +16,13 @@ def write_graph(graph, attributes=None, where=None):
     if where is not None:
         filename = where
     else:
-        filename = f'3regular/{num_qubits}_graphs/{hash_}.pkl'
+        filename = f'hari/{num_qubits}_graphs/{hash_}.pkl'
     try:
-        os.mkdir(f'3regular')
+        os.mkdir(f'hari')
     except FileExistsError:
         pass
     try:
-        os.mkdir(f'3regular/{num_qubits}_graphs')
+        os.mkdir(f'hari/{num_qubits}_graphs')
     except FileExistsError:
         pass
     try:

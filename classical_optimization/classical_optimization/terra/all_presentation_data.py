@@ -81,8 +81,8 @@ SLURM = f"""#!/bin/bash
 # Replace this with commands to run your job. 
 """
 
-dirs = ['../../../3regular', '../../../complete']
-dir_ = dirs[0]
+dirs = ['../../../3regular', '../../../complete', '../../../hari']
+dir_ = dirs[2]
 graph_folders = [folder for folder in os.listdir(dir_)]
 
 for folder in graph_folders:
