@@ -44,7 +44,7 @@ SLURM = f"""#!/bin/bash
 
 # Maximum expected wall time this job will require
 # Format is DD-HH:MM:SS, this one will end in 15 seconds
-#SBATCH -t 00-02:0:00
+#SBATCH -t 00-10:0:00
 
 # Scratch disk is storage local to a compute node and required for high
 # i/o jobs using temporary files (typically quantum chemistry jobs).  
@@ -73,7 +73,6 @@ SLURM = f"""#!/bin/bash
 # The following example runs a MATLAB program stored in example.m
 # Replace this with commands to run your job. 
 """
-
 seed = 137
 np.random.seed(seed)
 # We might want more graphs, additionally we want to make sure that the graphs are saved in a way that it is easy
@@ -81,20 +80,19 @@ np.random.seed(seed)
 num_graphs_gen = 10
 graphs = []
 discretization = 10
-n = 16
+n = 8
 p = 1/n
 m = 1/2 * p * n**2
 
 for num_qubits in [n]:
     graphs = []
-    edges = [[i, j] for i in range(num_qubits) for j in range(num_qubits) if i != j]
-    graph_edges = []
-
     for _ in range(num_graphs_gen):
+        edges = [[i, j] for i in range(num_qubits) for j in range(num_qubits) if i != j]
+        graph_edges = []
         g = nx.Graph()
         for i in range(num_qubits):
             g.add_node(i)
-        for __ in range(m):
+        for __ in range(int(m)):
             edge = edges.pop(np.random.randint(0, len(edges)))
             graph_edges.append(edge)
         for edge in graph_edges:

@@ -51,7 +51,7 @@ SLURM = f"""#!/bin/bash
 
 # Maximum expected wall time this job will require
 # Format is DD-HH:MM:SS, this one will end in 15 seconds
-#SBATCH -t 00-02:0:00
+#SBATCH -t 00-10:0:00
 
 # Scratch disk is storage local to a compute node and required for high
 # i/o jobs using temporary files (typically quantum chemistry jobs).  

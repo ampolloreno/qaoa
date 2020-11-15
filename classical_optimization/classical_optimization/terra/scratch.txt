@@ -35,7 +35,7 @@
 
 # Maximum expected wall time this job will require
 # Format is DD-HH:MM:SS, this one will end in 15 seconds
-#SBATCH -t 00-02:0:00
+#SBATCH -t 00-10:0:00
 
 # Scratch disk is storage local to a compute node and required for high
 # i/o jobs using temporary files (typically quantum chemistry jobs).  
@@ -64,4 +64,4 @@
 # The following example runs a MATLAB program stored in example.m
 # Replace this with commands to run your job. 
 
-python ~/repos/qaoa/classical_optimization/classical_optimization/terra/presentation_data_for_one_graph.py ../../../3regular/8_graphs/4bba8f1e90ae53960bb881ba676dee56.pkl
+python ~/repos/qaoa/classical_optimization/classical_optimization/terra/presentation_data_for_one_graph.py ../../../hari/8_graphs/a8f0f08ed4c82e7b1e0406437d6c7874.pkl
