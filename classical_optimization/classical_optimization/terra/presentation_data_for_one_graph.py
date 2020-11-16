@@ -27,7 +27,7 @@ def max_landscape(data):
 np.random.seed(666)
 # picked to make the points about the same between simulated annealing and es
 simulator = Aer.get_backend('qasm_simulator')
-noise_model = create_noise_model(cz_fidelity=.9)
+noise_model = create_noise_model(cz_fidelity=1)
 
 
 def weights(graph):
@@ -168,5 +168,5 @@ write_graph(graph,
                         #'maxcut_result': maxcut_result,
                         'maxarg_result': maxarg_result},
             where=path,
-            noisy=True)
+            noisy=False)
 

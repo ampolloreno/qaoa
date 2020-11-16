@@ -19,11 +19,11 @@ max_beta = np.pi/4
 discretization = int(sys.argv[2])
 discretization = 40
 gammas, betas = produce_gammas_betas(discretization, max_gamma, max_beta, min_gamma, min_beta)
-noisy = True
+noisy = False
 
 filename = sys.argv[1]
 landscape_string = f"landscape_d{discretization}_b{max_beta}_g{max_gamma}_b{min_beta}_g{min_gamma}"
-if landscape_string in read_graph(filename).keys():
+if True:
     graph = read_graph(filename)['graph']
     num_qubits = len(graph.nodes)
     start = time.time()
