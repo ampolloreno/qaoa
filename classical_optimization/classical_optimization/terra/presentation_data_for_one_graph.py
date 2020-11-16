@@ -168,5 +168,5 @@ write_graph(graph,
                         #'maxcut_result': maxcut_result,
                         'maxarg_result': maxarg_result},
             where=path,
-            noisy=False)
+            noisy=True)
 
