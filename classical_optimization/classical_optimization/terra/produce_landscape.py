@@ -23,7 +23,7 @@ noisy = True
 
 filename = sys.argv[1]
 landscape_string = f"landscape_d{discretization}_b{max_beta}_g{max_gamma}_b{min_beta}_g{min_gamma}"
-if landscape_string not in read_graph(filename).keys():
+if landscape_string in read_graph(filename).keys():
     graph = read_graph(filename)['graph']
     num_qubits = len(graph.nodes)
     start = time.time()
@@ -37,9 +37,9 @@ if landscape_string not in read_graph(filename).keys():
                 circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, num_qubits=num_qubits, weights=weights(graph), measure=False, density_matrix=True)
                 experiments.append(circuit)
         job = execute(experiments, backend=simulator, noise_model=noise_model)
-        outputs = [result.data.snapshots['density_matrix']['output'][0]['value'] for result in job.result().results]
+        outputs = [result.data.snapshots.density_matrix['output'][0]['value'] for result in job.result().results]
         #The diagonal is real, so we take the first element.
-        expectations = [density_cost(np.array(output), num_qubits=num_qubits, weights=weights(graph)) for output in
+        expectations = [density_cost(np.array(output)[:, :, 0], num_qubits=num_qubits, weights=weights(graph)) for output in
                         outputs]
 
         # expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
