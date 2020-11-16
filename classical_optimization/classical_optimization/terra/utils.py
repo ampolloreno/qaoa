@@ -60,21 +60,22 @@ def read_graph(filename):
 def cost(statevector, num_qubits, weights):
     rtn = 0
     for edge, weight in weights.items():
-        rtn += .5 * weight * (1 - np.conj(statevector.T).dot(Z(*edge, num_qubits).dot(statevector)))
+        rtn += weight * (np.conj(statevector.T).dot(Z(*edge, num_qubits).dot(statevector)))
     return rtn
 
 
 def density_cost(density_matrix, num_qubits, weights):
     rtn = 0
     for edge, weight in weights.items():
-        rtn += .5 * weight * (1 - np.trace(Z(*edge, num_qubits).dot(density_matrix)))
+        rtn += weight * (np.trace(Z(*edge, num_qubits).dot(density_matrix)))
     return rtn
 
 
 def Z(i, j, num_qubits):
     rtn = np.eye(1)
     z = np.array([[1, 0], [0, -1]])
-    for k in range(num_qubits):
+    # Holy eff order matters be careful.
+    for k in reversed(range(num_qubits)):
         if k == i or k == j:
             rtn = np.kron(rtn, z)
         else:

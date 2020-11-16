@@ -2,7 +2,7 @@
 python produce_landscape.py filename discretization
 """
 from classical_optimization.qaoa_circuits import produce_gammas_betas, maxcut_qaoa_circuit
-from classical_optimization.terra.utils import write_graph, read_graph, weights, density_cost
+from classical_optimization.terra.utils import write_graph, read_graph, weights, density_cost, cost
 from coldquanta.qiskit_tools.modeling.neutral_atom_noise_model import create_noise_model
 import numpy as np
 from qiskit import Aer, execute
@@ -29,19 +29,20 @@ if landscape_string not in read_graph(filename).keys():
     start = time.time()
     if noisy:
         simulator = Aer.get_backend('qasm_simulator')
-        noise_model = create_noise_model(cz_fidelity=1)
+        noise_model = create_noise_model(cz_fidelity=.9)
         experiments = []
         for beta in betas:
             for gamma in gammas:
+                print(beta, gamma)
                 circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, num_qubits=num_qubits, weights=weights(graph), measure=False, density_matrix=True)
                 experiments.append(circuit)
         job = execute(experiments, backend=simulator, noise_model=noise_model)
-        outputs = [result.data.snapshots.density_matrix['output'][0]['value'] for result in job.result().results]
-        # The diagonal is real, so we take the first element.
-        expectations = [density_cost(np.array(output)[:, :, 0], num_qubits=num_qubits, weights=weights(graph)) for output in
+        outputs = [result.data.snapshots['density_matrix']['output'][0]['value'] for result in job.result().results]
+        #The diagonal is real, so we take the first element.
+        expectations = [density_cost(np.array(output), num_qubits=num_qubits, weights=weights(graph)) for output in
                         outputs]
 
-        #expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
+        # expectations = [np.real(cost(job.result().get_statevector(experiment), num_qubits=num_qubits, weights=weights(graph))) for experiment in experiments]
 
         landscape = np.zeros((discretization, 2*discretization))
         for i, beta in enumerate(betas):
