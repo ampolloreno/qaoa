@@ -79,7 +79,7 @@ np.random.seed(seed)
 # to recover the data, and make sure that new graphs are non-isomorphic.
 num_graphs_gen = 10
 graphs = []
-discretization = 10
+discretization = 40
 n = 8
 p = 1/n
 m = 1/2 * p * n**2
