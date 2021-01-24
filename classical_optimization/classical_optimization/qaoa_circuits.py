@@ -4,6 +4,25 @@ from scipy.optimize import minimize
 from qiskit import execute
 import numpy as np
 #from recirq.optimize.mgd import model_gradient_descent
+# I may have modified my qiskit - this adds on an attribute when I import.
+from qiskit.providers.aer.extensions import snapshot_density_matrix
+
+def Z(i, j, num_qubits):
+    rtn = np.eye(1)
+    z = np.array([[1, 0], [0, -1]])
+    # Holy eff order matters be careful.
+    for k in reversed(range(num_qubits)):
+        if k == i or k == j:
+            rtn = np.kron(rtn, z)
+        else:
+            rtn = np.kron(rtn, np.eye(2))
+    return rtn
+
+def density_cost(density_matrix, num_qubits, weights):
+    rtn = 0
+    for edge, weight in weights.items():
+        rtn += weight * (np.trace(Z(*edge, num_qubits).dot(density_matrix)))
+    return rtn
 
 SCIPY_METHODS =\
     ['Nelder-Mead',
@@ -130,7 +149,7 @@ def plot_landscape(landscape, max_gamma, max_beta, colorbar=True, history=None, 
 def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, coupling_map, weights, rows, cols,
                                            *, noise_model=None, seed=None):
     """Build and run the a qaoa circuit with the given parameters on the given simulator."""
-    circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, rows=rows, cols=cols, weights=weights)
+    circuit = maxcut_qaoa_circuit(gammas=[gamma], betas=[beta], p=1, rows=rows, cols=cols, weights=weights, measure=False, density_matrix=True)
     job = execute(circuit,
                   simulator,
                   noise_model=noise_model,
@@ -138,8 +157,16 @@ def execute_qaoa_circuit_and_estimate_cost(gamma, beta, num_shots, simulator, co
                   optimization_level=0,
                   shots=num_shots,
                   seed_simulator=seed)
-    all_counts = job.result().get_counts()
-    return estimate_cost(all_counts, weights)
+    #all_counts = job.result().get_counts()
+    outputs = [result.data.snapshots.density_matrix['output'][0]['value'] for result in job.result().results]
+    # The diagonal is real, so we take the first element.
+    num_qubits = rows*cols
+    expectations = [density_cost(np.array(output)[:, :, 0], num_qubits=num_qubits, weights=weights) for output in
+                   outputs]
+    return expectations[0]
+
+
+    #return estimate_cost(all_counts, weights)
 
 
 def beta_gamma_to_index(beta, gamma, discretization, max_gamma, max_beta, relative=False):
