@@ -7,6 +7,7 @@ import numpy as np
 # I may have modified my qiskit - this adds on an attribute when I import.
 from qiskit.providers.aer.extensions import snapshot_density_matrix
 
+
 def Z(i, j, num_qubits):
     rtn = np.eye(1)
     z = np.array([[1, 0], [0, -1]])
@@ -18,11 +19,13 @@ def Z(i, j, num_qubits):
             rtn = np.kron(rtn, np.eye(2))
     return rtn
 
+
 def density_cost(density_matrix, num_qubits, weights):
     rtn = 0
     for edge, weight in weights.items():
         rtn += weight * (np.trace(Z(*edge, num_qubits).dot(density_matrix)))
     return rtn
+
 
 SCIPY_METHODS =\
     ['Nelder-Mead',
