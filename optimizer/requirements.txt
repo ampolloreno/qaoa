@@ -1,0 +1,4 @@
+-e git://git+https://github.com/hardmaru/estool.git
+networkx
+numpy
+scipy-optimize
