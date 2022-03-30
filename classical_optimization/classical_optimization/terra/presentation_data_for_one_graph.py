@@ -53,6 +53,9 @@ def objective(graph, shots_per_point):
 
     @store_log
     def gamma_beta_objective(gamma_beta):
+        """
+        :param gamma_beta: (gamma, beta)
+        """
         # The cut value is the expectation value, minima of the negation correspond to maxima.
         return execute_qaoa_circuit_and_estimate_cost(gamma=gamma_beta[0]*np.pi, beta=gamma_beta[1]*np.pi, # We will rescale the argument by pi.
                                                        num_shots=shots_per_point,
