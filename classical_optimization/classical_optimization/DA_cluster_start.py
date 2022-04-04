@@ -8,7 +8,7 @@ import networkx as nx
 import numpy as np
 from subprocess import call
 import sys
-num_processors = 32
+num_processors = 16
 SLURM = f"""#!/bin/bash
 # This is a sample slurm job script for the JILA cluster
 # Edit below as required, but delete any lines you do not need
@@ -42,7 +42,7 @@ SLURM = f"""#!/bin/bash
 # or the job will likely fail.  If you're not sure, estimate high.
 #
 # The cluster is designed for roughly 7.5GiB/CPU, making that a fine guess.
-#SBATCH --mem=400G
+#SBATCH --mem=7.5G
 
 # Maximum expected wall time this job will require
 # Format is DD-HH:MM:SS, this one will end in 15 seconds
