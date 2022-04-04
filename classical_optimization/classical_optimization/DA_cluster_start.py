@@ -8,7 +8,7 @@ import networkx as nx
 import numpy as np
 from subprocess import call
 import sys
-num_processors = 16
+num_processors = 8
 SLURM = f"""#!/bin/bash
 # This is a sample slurm job script for the JILA cluster
 # Edit below as required, but delete any lines you do not need
