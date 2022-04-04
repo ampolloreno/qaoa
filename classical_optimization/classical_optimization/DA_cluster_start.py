@@ -42,7 +42,7 @@ SLURM = f"""#!/bin/bash
 # or the job will likely fail.  If you're not sure, estimate high.
 #
 # The cluster is designed for roughly 7.5GiB/CPU, making that a fine guess.
-#SBATCH --mem=7.5G
+#SBATCH --mem=8G
 
 # Maximum expected wall time this job will require
 # Format is DD-HH:MM:SS, this one will end in 15 seconds
